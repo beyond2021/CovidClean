@@ -43,11 +43,7 @@ class Fire {
         let myID = this.userId;
   
 
-        let ref = firebase
-            .firestore()
-            .collection("users")
-            .doc("Pzs8YHxggDcyahrUXKen")
-            .collection("lists");
+        let ref = this.ref.orderBy("name")
 
             // console.log(" kev=id", this.userId)
 
@@ -68,8 +64,28 @@ class Fire {
 
     }
 
+    addList(list) {
+        let ref = this.ref;
+        ref.add(list)
+
+    }
+
+    updateList(list) {
+        let ref = this.ref;
+        ref.doc(list.id).update(list)
+
+    }
+
     get userId() {
         return firebase.auth().currentUser.uid;
+    }
+
+    get ref() {
+        return firebase
+        .firestore()
+        .collection("users")
+        .doc("Pzs8YHxggDcyahrUXKen")
+        .collection("lists");
     }
 
     detach() {
