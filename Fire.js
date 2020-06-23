@@ -2,45 +2,40 @@ import firebase from 'firebase';
 import '@firebase/firestore';
 
 const firebaseConfig = {
-    apiKey: "AIzaSyB1tWZlrsXIdnN--geIofLv4zf5EV5pDf4",
-    authDomain: "covid-clean-6130a.firebaseapp.com",
-    databaseURL: "https://covid-clean-6130a.firebaseio.com",
-    projectId: "covid-clean-6130a",
-    storageBucket: "covid-clean-6130a.appspot.com",
-    messagingSenderId: "173106121170",
-    appId: "1:173106121170:web:e262837dde6ca4fe57a00b",
-    measurementId: "G-9SNK3NZGSN"
-}
+    apiKey: "AIzaSyBFcT2nfjrJ9vjvBpBf_6WVRXpIm0l6MB8",
+    authDomain: "covidcare-79c01.firebaseapp.com",
+    databaseURL: "https://covidcare-79c01.firebaseio.com",
+    projectId: "covidcare-79c01",
+    storageBucket: "covidcare-79c01.appspot.com",
+    messagingSenderId: "167539698380",
+    appId: "1:167539698380:web:7b2fffb68b76f353033069",
+    measurementId: "G-BWGBBR3VW5"
+};
 
 
 
-class Fire{
+class Fire {
     constructor(callback) {
-        this.init(callback)
+        this.init(callback);
     }
+
     init(callback) {
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
 
         firebase.auth().onAuthStateChanged(user => {
-
             if (user) {
                 callback(null, user);
-
             } else {
-
-                firebase.auth().signInAnonymously().catch( error => {
-                    firebase
+                firebase
                     .auth()
                     .signInAnonymously()
-                    .catch(error => {});
+                    .catch(error => {
                         callback(error);
-                });
+                    });
             }
-
         });
-
     }
 
     getLists(callback) {
@@ -50,31 +45,31 @@ class Fire{
             .doc(this.userId)
             .collection("lists");
 
+            // console.log(ref)
 
-    this.unsubscribe = ref.onSnapshot(snapshot => {
-
-        
-        lists = [];
-
-        snapshot.forEach(doc => {
-
-            lists.push({ id: doc.id, ...doc.data() });
-           
+        this.unsubscribe = ref.onSnapshot(snapshot => {
             
+            
+            
+            lists = [];
+
+            snapshot.forEach(doc => {
+                // console.log(doc.data());
+                lists.push({ id: doc.id, ...doc.data() });
+                
+            });
+            
+            callback(lists);
         });
-        
-        // console.log(snapshot)
-
-        callback(lists);
-    });        
-
     }
-    
+
     get userId() {
         return firebase.auth().currentUser.uid;
     }
+
+    detach() {
+        this.unsubscribe();
+    }
 }
-
-
 
 export default Fire;
