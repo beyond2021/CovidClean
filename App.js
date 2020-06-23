@@ -6,7 +6,7 @@ import tempData from "./tempData";
 import TodoList from "./components/TodoList";
 import AddListModal from "./components/AddListModal";
 import Fire from "./Fire";
-import { getPosts } from "./API";
+import { getLists } from "./API";
 
 export default class App extends React.Component {
     state = {
@@ -16,14 +16,18 @@ export default class App extends React.Component {
         loading: true
     };
 
-    
+    onListsReceived = (todoList) => {
+      console.log(todoList)
+    }
 
     componentDidMount() {
+      // getLists(this.onListsReceived);
+      
         firebase = new Fire((error, user) => {
             if (error) {
                 return alert("Uh oh, something went wrong");
             }
-
+           
             firebase.getLists(lists => {
                 this.setState({ lists, user }, () => {
                     this.setState({ loading: false });
@@ -82,7 +86,7 @@ export default class App extends React.Component {
                 <View style={{ flexDirection: "row" }}>
                     <View style={styles.divider} />
                     <Text style={styles.title}>
-                        Todo <Text style={{ fontWeight: "300", color: colors.blue }}>Lists</Text>
+                        Covid <Text style={{ fontWeight: "300", color: colors.blue }}>Care</Text>
                     </Text>
                     <View style={styles.divider} />
                 </View>

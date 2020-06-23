@@ -39,28 +39,33 @@ class Fire {
     }
 
     getLists(callback) {
+
+        let myID = this.userId;
+  
+
         let ref = firebase
             .firestore()
             .collection("users")
-            .doc(this.userId)
+            .doc("Pzs8YHxggDcyahrUXKen")
             .collection("lists");
 
-            // console.log(ref)
+            // console.log(" kev=id", this.userId)
 
-        this.unsubscribe = ref.onSnapshot(snapshot => {
-            
-            
-            
-            lists = [];
+           this.unsubscribe = ref.onSnapshot(querySnapshot => {
+                const list = [];
+                querySnapshot.forEach(doc => {
+        
+                    // console.log("kev d =", doc.id)
+                  const { title, complete } = doc.data();
+                  list.push({
+                    id: doc.id, ...doc.data()
+                  });
+                });
+        
+                callback(list);
+        
+            } ); 
 
-            snapshot.forEach(doc => {
-                // console.log(doc.data());
-                lists.push({ id: doc.id, ...doc.data() });
-                
-            });
-            
-            callback(lists);
-        });
     }
 
     get userId() {
