@@ -15,12 +15,17 @@ import {
  } from "react-native";
  import {swipeable} from 'react-native-gesture-handler';
 import Swipeable from "react-native-gesture-handler/Swipeable";
+import { Audio } from 'expo-av'
 
 
 export default class TodoModal extends React.Component {
     state = {
         newTodo: ""
     };
+    componentDidMount(){
+        
+
+    }
 
     toggleTodoCompleted = index => {
         let list = this.props.list

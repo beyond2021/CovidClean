@@ -6,21 +6,38 @@ import tempData from "./tempData";
 import TodoList from "./components/TodoList";
 import AddListModal from "./components/AddListModal";
 import Fire from "./Fire";
+import { Audio } from 'expo-av'
 
 
 export default class App extends React.Component {
+
+    constructor(props)
+    {
+      super(props);
+    //   this.onEndReachedCalledDuringMomentum = true;
+
+    }
+
+    // onEndReached = ({ distanceFromEnd }) => {
+    //     console.log("scroll is calling")
+    //     if(!this.onEndReachedCalledDuringMomentum){
+    //         this.addListPlay;
+    //         this.onEndReachedCalledDuringMomentum = true;
+    //     }
+    // }
+
+
     state = {
         addTodoVisible: false,
         lists: [],
         user: {},
-        loading: true
     };
-
+    
     onListsReceived = (todoList) => {
       console.log(todoList)
     }
 
-    componentDidMount() {
+    async componentDidMount() {
       
       
         firebase = new Fire((error, user) => {
@@ -36,8 +53,8 @@ export default class App extends React.Component {
 
             this.setState({ user });
         });
-    }
 
+    }
     componentWillUnmount() {
         firebase.detach();
     }
@@ -46,12 +63,16 @@ export default class App extends React.Component {
         this.setState({ addTodoVisible: !this.state.addTodoVisible });
     }
 
+    togglePlaying() {
+
+        this.setState({ shouldPlay: !this.state.shouldPlay });
+    }
+
     renderList = list => {
         return <TodoList list={list} updateList={this.updateList} />;
     };
 
     addList = list => {
-        // this.setState({ lists: [...this.state.lists, { ...list, id: this.state.lists.length + 1, todos: [] }] });
         firebase.addList({
           name: list.name,
           color: list.color,
@@ -60,13 +81,42 @@ export default class App extends React.Component {
     };
 
     updateList = list => {
-      firebase.updateList(list);
-        // this.setState({
-        //     lists: this.state.lists.map(item => {
-        //         return item.id === list.id ? list : item;
-        //     })
-        // });
+      firebase.updateList(list); 
     };
+   
+    componentWillUnmount() {
+      
+        console.log('Component is unmounting.');
+        
+    }
+
+    addListPlay = async () => {
+        try {
+            const { sound: soundObject, status } = await Audio.Sound.createAsync(
+              require('./assets/fork_media_warfare_arrow_pass_by.mp3'),
+              { shouldPlay: true }
+            );
+            // console.log("this is working.")
+          } catch (error) {
+           console.log("sound error", error)
+          }
+
+    }
+
+    scrollPlay = async () => {
+        try {
+            const { sound: soundObject, status } = await Audio.Sound.createAsync(
+              require('./assets/zapsplat_cartoon_blink_shake_flutter_high_pitched_003_47921.mp3'),
+              { shouldPlay: true }
+            );
+            // console.log("this is working.")
+          } catch (error) {
+           console.log("sound error", error)
+          }
+
+    }
+
+    
 
     render() {
         if (this.state.loading) {
@@ -77,6 +127,7 @@ export default class App extends React.Component {
             );
         }
 
+        
         return (
             <View style={styles.container}>
                 <Modal
@@ -96,7 +147,9 @@ export default class App extends React.Component {
                 </View>
 
                 <View style={{ marginVertical: 48 }}>
-                    <TouchableOpacity style={styles.addList} onPress={() => this.toggleAddTodoModal()}>
+                    <TouchableOpacity 
+                        style={styles.addList} 
+                        onPress={() => {this.toggleAddTodoModal(); this.addListPlay(); }}>
                         <AntDesign name="plus" size={16} color={colors.blue} />
                     </TouchableOpacity>
 
@@ -105,12 +158,16 @@ export default class App extends React.Component {
 
                 <View style={{ height: 275, paddingLeft: 32 }}>
                     <FlatList
+                        
                         data={this.state.lists}
                         keyExtractor={item => item.id.toString()}
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}
                         renderItem={({ item }) => this.renderList(item)}
-                        keyboardShouldPersistTaps="always"
+                        onMomentumScrollBegin={() => this.scrollPlay()}
+                        
+                        
+                        
                     />
                 </View>
             </View>
